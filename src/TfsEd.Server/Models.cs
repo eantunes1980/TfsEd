@@ -36,3 +36,59 @@ internal sealed class ServerError
 {
     public string? Message { get; set; }
 }
+
+internal sealed class TfvcItemDto
+{
+    public string Path { get; set; } = string.Empty;
+
+    public int Version { get; set; }
+
+    public bool IsFolder { get; set; }
+
+    public long Size { get; set; }
+
+    public string? HashValue { get; set; }
+
+    public DateTimeOffset ChangeDate { get; set; }
+}
+
+internal sealed class IdentityRefDto
+{
+    public string? DisplayName { get; set; }
+
+    public string? UniqueName { get; set; }
+}
+
+internal sealed class ChangesetDto
+{
+    public int ChangesetId { get; set; }
+
+    public IdentityRefDto? Author { get; set; }
+
+    public DateTimeOffset CreatedDate { get; set; }
+
+    public string? Comment { get; set; }
+}
+
+internal sealed class ChangeDto
+{
+    public TfvcItemDto? Item { get; set; }
+
+    public string? ChangeType { get; set; }
+}
+
+internal sealed class ItemBatchRequest
+{
+    public List<ItemDescriptorDto> ItemDescriptors { get; set; } = [];
+}
+
+internal sealed class ItemDescriptorDto
+{
+    public string Path { get; set; } = string.Empty;
+
+    public string Version { get; set; } = string.Empty;
+
+    public string VersionType { get; set; } = "changeset";
+
+    public string RecursionLevel { get; set; } = "none";
+}

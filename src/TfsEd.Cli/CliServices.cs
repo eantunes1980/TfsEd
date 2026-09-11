@@ -16,6 +16,8 @@ public sealed class CliServices
 
     public Func<string, string?> GetEnvironmentVariable { get; init; } = Environment.GetEnvironmentVariable;
 
+    public string WorkingDirectory { get; init; } = Environment.CurrentDirectory;
+
     public TextReader Input { get; init; } = Console.In;
 
     public TextWriter Output { get; init; } = Console.Out;

@@ -15,6 +15,7 @@ public sealed class CliTests : IDisposable
     private readonly StringWriter _output = new();
     private readonly StringWriter _error = new();
     private readonly Dictionary<string, string> _environment = [];
+    private string? _workingDirectory;
     private Func<HttpRequestMessage, HttpResponseMessage> _respond = request =>
         request.RequestUri!.AbsolutePath.EndsWith("/_apis/projects")
             ? StubHttpHandler.Json("""{"count":1,"value":[{"name":"Alpha"}]}""")
@@ -32,6 +33,7 @@ public sealed class CliTests : IDisposable
             Credentials = _credentials,
             CreateHttpClient = _ => new HttpClient(new StubHttpHandler(r => _respond(r))),
             GetEnvironmentVariable = name => _environment.GetValueOrDefault(name),
+            WorkingDirectory = _workingDirectory ?? _dir,
             Input = new StringReader(string.Empty),
             Output = _output,
             Error = _error,
@@ -106,6 +108,28 @@ public sealed class CliTests : IDisposable
         Assert.Equal(0, exit);
         Assert.Null(_credentials.Get(CollectionUrl.Parse(Url)));
         Assert.Null(Config.Load().DefaultCollection);
+    }
+
+    [Fact]
+    public async Task Workspace_commands_outside_a_workspace_fail_with_hint()
+    {
+        var exit = await RunAsync("get", "-v", "C1");
+
+        Assert.Equal(1, exit);
+        Assert.Contains("Not inside a TfsEd workspace", _error.ToString());
+    }
+
+    [Fact]
+    public async Task Status_in_fresh_workspace_reports_untracked_files()
+    {
+        var workspace = Core.Workspaces.Workspace.Create(Path.Combine(_dir, "ws"), CollectionUrl.Parse(Url), "$/P");
+        File.WriteAllText(Path.Combine(workspace.Root, "new.txt"), "x");
+        _workingDirectory = workspace.Root;
+
+        var exit = await RunAsync("status");
+
+        Assert.Equal(0, exit);
+        Assert.Contains("?  new.txt", _output.ToString());
     }
 
     private sealed class InMemoryCredentialStore : ICredentialStore

@@ -12,6 +12,13 @@ public static class CliApp
         root.Subcommands.Add(LoginCommand.Create(services));
         root.Subcommands.Add(LogoutCommand.Create(services));
         root.Subcommands.Add(InfoCommand.Create(services));
+        root.Subcommands.Add(WorkspaceCommand.Create(services));
+        root.Subcommands.Add(GetCommand.Create(services));
+        root.Subcommands.Add(StatusCommand.Create(services));
+        root.Subcommands.Add(DiffCommand.Create(services));
+        root.Subcommands.Add(HistoryCommand.Create(services));
+        root.Subcommands.Add(ChangesetCommand.Create(services));
+        root.Subcommands.Add(DirCommand.Create(services));
         return root;
     }
 }
@@ -22,5 +29,16 @@ internal static class GlobalOptions
     {
         Description = "Collection URL. Defaults to TFSED_COLLECTION or the collection of the last login.",
         Recursive = true,
+    };
+
+    public static Option<string?> Version() => new("--version", "-v")
+    {
+        Description = "Version: T (latest, default) or C<changeset>, e.g. C1234.",
+    };
+
+    public static Argument<string?> OptionalPath(string description) => new("path")
+    {
+        Description = description,
+        Arity = ArgumentArity.ZeroOrOne,
     };
 }

@@ -14,8 +14,8 @@ jobs:
         rid: [win-x64, linux-x64, linux-arm64, osx-x64, osx-arm64]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-dotnet@v5
         with:
           global-json-file: global.json
       - name: Publish
@@ -33,7 +33,7 @@ jobs:
             chmod +x tfsed
             tar -czf ../../tfsed-${{ matrix.rid }}.tar.gz *
           fi
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: tfsed-${{ matrix.rid }}
           path: tfsed-${{ matrix.rid }}.*
@@ -42,7 +42,7 @@ jobs:
     needs: publish
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v5
         with:
           path: dist
           merge-multiple: true

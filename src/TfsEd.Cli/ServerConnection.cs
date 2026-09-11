@@ -4,7 +4,7 @@ using TfsEd.Server;
 
 namespace TfsEd.Cli;
 
-/// <summary>An authenticated client for the collection selected on the command line or in the config.</summary>
+/// <summary>An authenticated client for the collection selected on the command line, the workspace or the config.</summary>
 internal sealed class ServerConnection : IDisposable
 {
     private const string PatVariable = "TFSED_PAT";
@@ -23,18 +23,25 @@ internal sealed class ServerConnection : IDisposable
 
     public string CredentialSource { get; }
 
-    public static CollectionUrl ResolveCollection(ParseResult parseResult, CliServices services)
+    /// <summary>Order: <c>--collection</c>, the current workspace, <c>TFSED_COLLECTION</c>, the last login.</summary>
+    public static CollectionUrl ResolveCollection(ParseResult parseResult, CliServices services, CollectionUrl? workspaceCollection = null)
     {
-        var raw = parseResult.GetValue(GlobalOptions.Collection)
+        var option = parseResult.GetValue(GlobalOptions.Collection);
+        if (option is null && workspaceCollection is not null)
+        {
+            return workspaceCollection;
+        }
+
+        var raw = option
             ?? services.GetEnvironmentVariable(CollectionVariable)
             ?? services.Config.Load().DefaultCollection
             ?? throw new TfsEdException("No collection configured. Run 'tfsed login <collection-url>' first.");
         return CollectionUrl.Parse(raw);
     }
 
-    public static ServerConnection Open(ParseResult parseResult, CliServices services)
+    public static ServerConnection Open(ParseResult parseResult, CliServices services, CollectionUrl? workspaceCollection = null)
     {
-        var collection = ResolveCollection(parseResult, services);
+        var collection = ResolveCollection(parseResult, services, workspaceCollection);
 
         string credentialSource;
         var pat = services.GetEnvironmentVariable(PatVariable);

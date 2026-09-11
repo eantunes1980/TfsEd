@@ -1,10 +1,11 @@
 using System.Net;
 using TfsEd.Core;
+using TfsEd.Core.Workspaces;
 
 namespace TfsEd.Server;
 
 /// <summary>The server returned an error response.</summary>
-public class TfsEdServerException(string message, HttpStatusCode? statusCode = null) : TfsEdException(message)
+public class TfsEdServerException(string message, HttpStatusCode? statusCode = null) : TfsEdException(message), IHasStatusCode
 {
     public HttpStatusCode? StatusCode { get; } = statusCode;
 }
