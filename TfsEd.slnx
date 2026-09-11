@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/TfsEd.Cli/TfsEd.Cli.csproj" />
+    <Project Path="src/TfsEd.Core/TfsEd.Core.csproj" />
+    <Project Path="src/TfsEd.Server/TfsEd.Server.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/TfsEd.Tests/TfsEd.Tests.csproj" />
+  </Folder>
+</Solution>

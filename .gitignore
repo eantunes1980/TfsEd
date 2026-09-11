@@ -1,0 +1,10 @@
+bin/
+obj/
+out/
+.vs/
+.idea/
+*.user
+TestResults/
+
+# Local planning notes (contain environment-specific details)
+PLAN.md
